@@ -1,0 +1,53 @@
+# Lab2 技术需求文档 (Based on Lab2.pdf)
+
+## 1. 核心目标
+在 Lab1 (纯文本编辑器) 基础上，扩展支持 XML 编辑器、统计模块和拼写检查模块。
+保持 Lab1 原有 18 个命令功能不变。
+
+## 2. 架构要求
+- **多态设计**: 抽象出通用的 `Editor` 接口，使 `TextEditor` (Lab1) 和 `XmlEditor` (Lab2) 实现同一接口 [cite: 6]。
+- **设计模式**:
+  - Command 模式: 继续用于 Undo/Redo [cite: 34]。
+  - Composite 模式: 用于表示 XML 的树形结构 (DOM) [cite: 35]。
+  - Adapter 模式: 用于拼写检查模块 (隔离第三方库依赖) [cite: 36, 122]。
+  - Decorator/Observer 模式: 建议用于统计模块 (时长统计) [cite: 98, 99]。
+
+## 3. 功能模块详情
+
+### A. XML 编辑器 (XmlEditor)
+- **数据结构**: 维护 DOM 树，每个节点必须有唯一的 `id` 属性 [cite: 22]。
+- **约束**:
+  - 不支持混合内容 (元素要么只有文本，要么只有子元素) [cite: 42]。
+  - 根标签只能有一个 [cite: 39]。
+- **新增命令**:
+  1. `insert-before <tagName> <newId> <targetId> ["text"]`: 在目标节点前插入兄弟节点 [cite: 180]。
+  2. `append-child <tagName> <newId> <parentId> ["text"]`: 追加子节点 [cite: 218]。
+  3. `edit-id <oldId> <newId>`: 修改 ID (需检查唯一性) [cite: 232]。
+  4. `edit-text <elementId> "text"`: 修改元素文本 (非叶子节点不可修改) [cite: 244]。
+  5. `delete-element <elementId>`: 删除元素及其子树 (根节点不可删) [cite: 255]。
+  6. `xml-tree [file]`: 打印树形结构 (显示 id 和属性) [cite: 262]。
+
+### B. 统计模块 (Statistics)
+- **功能**: 记录当前会话 (Session) 中文件的编辑时长 [cite: 82]。
+- **规则**:
+  - 切换到文件时开始计时，切出/关闭时停止 [cite: 88]。
+  - 重启程序或重新 load 文件时重置为 0 [cite: 85, 91]。
+- **显示**: 在 `editor-list` 命令中显示时长 (如 "2小时15分钟", "<1分钟" 显示为 "X秒") [cite: 93, 96]。
+
+### C. 拼写检查模块 (Spell Checking)
+- **功能**: 检查拼写错误并输出建议 [cite: 27]。
+- **命令**: `spell-check [file]` [cite: 296]。
+- **范围**:
+  - .txt: 检查全文 [cite: 120]。
+  - .xml: **仅**检查元素的文本内容 (忽略标签和属性) [cite: 121]。
+- **实现**: 必须使用 **Adapter 模式** 封装第三方库 (如 LanguageTool 或简单的 Mock 实现)，实现依赖隔离 [cite: 115]。
+
+### D. 修改原有命令
+1. `init <text|xml> <file> [with-log]`:
+   - 新增 `xml` 参数，初始化时创建包含 `<root id="root">` 的空 XML [cite: 143, 151]。
+2. `editor-list`:
+   - 显示格式需包含编辑时长，例如: `file1.txt* (2小时15分钟)` [cite: 161]。
+
+## 4. 输出与异常
+- 所有 XML 操作需检查 ID 唯一性，重复则报错。
+- 只有 .xml 文件能响应 XML 专用命令。

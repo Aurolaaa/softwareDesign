@@ -42,3 +42,11 @@ build/
 
 ### Mac OS ###
 .DS_Store
+
+
+# --- 忽略所有 Markdown 文件 ---
+*.md
+
+# --- 但是！强制保留以下重要文档 (白名单) ---
+!README.md
+!README_lab2.md

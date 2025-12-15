@@ -1,0 +1,99 @@
+# Lab2 功能测试命令集
+
+## 测试1：XML 基本操作
+init xml books.xml
+append-child book book1 root
+append-child title t1 book1 "Design Patterns"
+append-child author a1 book1 "Gang of Four"
+append-child year y1 book1 "1994"
+xml-tree
+save
+
+## 测试2：XML ID 修改和文本编辑
+edit-id book1 book_dp
+edit-text t1 "Design Patterns: Elements of Reusable Object-Oriented Software"
+xml-tree
+
+## 测试3：XML 插入兄弟节点
+append-child book book2 root
+insert-before title t2 t1
+edit-text t2 "Clean Code"
+xml-tree
+
+## 测试4：XML Undo/Redo
+undo
+xml-tree
+redo
+xml-tree
+
+## 测试5：文本编辑和拼写检查
+init text sample.txt
+append "This is a test file with some common spelling errors."
+append "I will recieve the package tomorrow."
+append "The goverment made an announcement."
+show
+spell-check
+
+## 测试6：统计功能
+editor-list
+load books.xml
+editor-list
+
+## 测试7：混合使用
+load sample.txt
+insert 2:1 "The meeting will begin at 3pm. "
+show 2:2
+spell-check
+editor-list
+
+## 测试8：XML 删除操作
+load books.xml
+delete-element book2
+xml-tree
+undo
+xml-tree
+
+## 测试9：多文件切换和统计
+init text file1.txt
+append "First file content"
+init text file2.txt
+append "Second file content"
+load file1.txt
+editor-list
+
+## 测试10：保存和退出
+save all
+exit
+
+## 错误测试场景
+
+### 测试：XML ID 重复
+init xml test.xml
+append-child item i1 root
+append-child item i1 root
+# 应该报错：ID 已存在
+
+### 测试：修改非叶子节点的文本
+init xml test2.xml
+append-child parent p1 root
+append-child child c1 p1
+edit-text p1 "some text"
+# 应该报错：非叶子节点不能修改文本
+
+### 测试：删除根节点
+init xml test3.xml
+delete-element root
+# 应该报错：不能删除根节点
+
+### 测试：在文本文件中使用 XML 命令
+init text text.txt
+append "hello"
+xml-tree
+# 应该报错：当前文件不是 XML 文件
+
+### 测试：在 XML 文件中使用文本命令
+init xml data.xml
+insert 1:1 "text"
+# 应该报错：当前文件不是文本文件
+
+
