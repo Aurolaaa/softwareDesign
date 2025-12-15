@@ -3,7 +3,7 @@ package lab1.model;
 import java.util.ArrayList;
 import java.util.List;
 
-public class TextEditor {
+public class TextEditor implements Editor {
     private List<String> lines;
     private boolean isModified;
 
@@ -65,4 +65,21 @@ public class TextEditor {
 
     public boolean isModified() { return isModified; }
     public void setModified(boolean modified) { isModified = modified; }
+    
+    // --- Editor 接口实现 ---
+    
+    @Override
+    public String getContent() {
+        return getText();
+    }
+    
+    @Override
+    public void setContent(String content) {
+        setText(content);
+    }
+    
+    @Override
+    public String getEditorType() {
+        return "text";
+    }
 }
