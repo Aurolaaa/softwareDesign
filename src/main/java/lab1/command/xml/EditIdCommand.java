@@ -13,20 +13,20 @@ public class EditIdCommand implements Command {
     private String oldId;
     private String newId;
     private XmlNode backup;
-    
+
     public EditIdCommand(XmlEditor editor, String oldId, String newId) {
         this.editor = editor;
         this.oldId = oldId;
         this.newId = newId;
     }
-    
+
     @Override
     public void execute() {
         backup = editor.getRoot().clone();
         editor.editId(oldId, newId);
         System.out.println("已将节点 ID 从 " + oldId + " 修改为 " + newId);
     }
-    
+
     @Override
     public void undo() {
         if (backup != null) {

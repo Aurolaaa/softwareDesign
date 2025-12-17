@@ -13,20 +13,20 @@ public class EditTextCommand implements Command {
     private String elementId;
     private String text;
     private XmlNode backup;
-    
+
     public EditTextCommand(XmlEditor editor, String elementId, String text) {
         this.editor = editor;
         this.elementId = elementId;
         this.text = text;
     }
-    
+
     @Override
     public void execute() {
         backup = editor.getRoot().clone();
         editor.editText(elementId, text);
         System.out.println("已修改节点 " + elementId + " 的文本内容");
     }
-    
+
     @Override
     public void undo() {
         if (backup != null) {

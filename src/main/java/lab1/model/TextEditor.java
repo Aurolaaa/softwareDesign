@@ -18,12 +18,18 @@ public class TextEditor implements Editor {
 
     public void setText(String content) {
         lines.clear();
-        if (content.isEmpty()){ return;}
+        if (content.isEmpty()) {
+            return;
+        }
         String[] splitLines = content.split("\n", -1);
-        for (String line : splitLines) {lines.add(line);}
+        for (String line : splitLines) {
+            lines.add(line);
+        }
     }
 
-    public List<String> getLines() { return lines; }
+    public List<String> getLines() {
+        return lines;
+    }
 
     // --- 核心操作 ---
 
@@ -33,13 +39,22 @@ public class TextEditor implements Editor {
     }
 
     public void insert(int line, int col, String text) {
-        if (line < 1 || line > lines.size() + 1) {throw new IllegalArgumentException("行号越界");}
+        if (line < 1 || line > lines.size() + 1) {
+            throw new IllegalArgumentException("行号越界");
+        }
         if (lines.isEmpty()) {
-            if (line == 1 && col == 1) { lines.add(text); isModified = true; return; }
-            else {throw new IllegalArgumentException("空文件只能在1:1位置插入");}
+            if (line == 1 && col == 1) {
+                lines.add(text);
+                isModified = true;
+                return;
+            } else {
+                throw new IllegalArgumentException("空文件只能在1:1位置插入");
+            }
         }
         String currentLine = lines.get(line - 1);
-        if (col < 1 || col > currentLine.length() + 1){ throw new IllegalArgumentException("列号越界");}
+        if (col < 1 || col > currentLine.length() + 1) {
+            throw new IllegalArgumentException("列号越界");
+        }
 
         StringBuilder sb = new StringBuilder(currentLine);
         sb.insert(col - 1, text);
@@ -48,11 +63,16 @@ public class TextEditor implements Editor {
     }
 
     public String delete(int line, int col, int length) {
-        if (line < 1 || line > lines.size()) { throw new IllegalArgumentException("行号越界");}
+        if (line < 1 || line > lines.size()) {
+            throw new IllegalArgumentException("行号越界");
+        }
         String currentLine = lines.get(line - 1);
-        if (col < 1 || col > currentLine.length() + 1){ throw new IllegalArgumentException("列号越界");}
+        if (col < 1 || col > currentLine.length() + 1) {
+            throw new IllegalArgumentException("列号越界");
+        }
         if (col - 1 + length > currentLine.length()) {
-            throw new IllegalArgumentException("删除长度超出行尾");}
+            throw new IllegalArgumentException("删除长度超出行尾");
+        }
 
         String deletedText = currentLine.substring(col - 1, col - 1 + length);
         StringBuilder sb = new StringBuilder(currentLine);
@@ -63,21 +83,26 @@ public class TextEditor implements Editor {
         return deletedText;
     }
 
-    public boolean isModified() { return isModified; }
-    public void setModified(boolean modified) { isModified = modified; }
-    
+    public boolean isModified() {
+        return isModified;
+    }
+
+    public void setModified(boolean modified) {
+        isModified = modified;
+    }
+
     // --- Editor 接口实现 ---
-    
+
     @Override
     public String getContent() {
         return getText();
     }
-    
+
     @Override
     public void setContent(String content) {
         setText(content);
     }
-    
+
     @Override
     public String getEditorType() {
         return "text";

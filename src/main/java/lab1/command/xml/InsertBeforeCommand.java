@@ -14,8 +14,8 @@ public class InsertBeforeCommand implements Command {
     private String newId;
     private String targetId;
     private String text;
-    private XmlNode backup;  // 用于 undo 的备份
-    
+    private XmlNode backup; // 用于 undo 的备份
+
     public InsertBeforeCommand(XmlEditor editor, String tagName, String newId, String targetId, String text) {
         this.editor = editor;
         this.tagName = tagName;
@@ -23,7 +23,7 @@ public class InsertBeforeCommand implements Command {
         this.targetId = targetId;
         this.text = text;
     }
-    
+
     @Override
     public void execute() {
         // 备份当前 DOM 树
@@ -32,7 +32,7 @@ public class InsertBeforeCommand implements Command {
         editor.insertBefore(tagName, newId, targetId, text);
         System.out.println("已在节点 " + targetId + " 前插入新节点 " + newId);
     }
-    
+
     @Override
     public void undo() {
         if (backup != null) {

@@ -27,7 +27,7 @@ class SpellCheckerTest {
     void testCheckSingleError() {
         String text = "I will recieve the package.";
         List<SpellChecker.SpellingError> errors = checker.check(text);
-        
+
         assertEquals(1, errors.size());
         assertEquals("recieve", errors.get(0).getWord());
         assertTrue(errors.get(0).getSuggestions().contains("receive"));
@@ -37,7 +37,7 @@ class SpellCheckerTest {
     void testCheckMultipleErrors() {
         String text = "The goverment announced teh decision.";
         List<SpellChecker.SpellingError> errors = checker.check(text);
-        
+
         assertEquals(2, errors.size());
     }
 
@@ -45,7 +45,7 @@ class SpellCheckerTest {
     void testCheckNoErrors() {
         String text = "This is a correct sentence.";
         List<SpellChecker.SpellingError> errors = checker.check(text);
-        
+
         assertEquals(0, errors.size());
     }
 
@@ -99,7 +99,7 @@ class SpellCheckerTest {
     void testCaseInsensitive() {
         String text = "I will Recieve the package.";
         List<SpellChecker.SpellingError> errors = checker.check(text);
-        
+
         assertEquals(1, errors.size());
         assertEquals("Recieve", errors.get(0).getWord());
     }
@@ -108,7 +108,7 @@ class SpellCheckerTest {
     void testUpperCase() {
         String text = "RECIEVE";
         List<SpellChecker.SpellingError> errors = checker.check(text);
-        
+
         assertEquals(1, errors.size());
     }
 
@@ -118,7 +118,7 @@ class SpellCheckerTest {
     void testErrorPosition() {
         String text = "I will recieve the package.";
         List<SpellChecker.SpellingError> errors = checker.check(text);
-        
+
         assertEquals(1, errors.size());
         SpellChecker.SpellingError error = errors.get(0);
         assertEquals(7, error.getPosition(), "recieve 从位置 7 开始");
@@ -128,7 +128,7 @@ class SpellCheckerTest {
     void testMultipleErrorPositions() {
         String text = "teh goverment";
         List<SpellChecker.SpellingError> errors = checker.check(text);
-        
+
         assertEquals(2, errors.size());
         assertTrue(errors.get(0).getPosition() < errors.get(1).getPosition());
     }
@@ -139,7 +139,7 @@ class SpellCheckerTest {
     void testSuggestions() {
         String text = "recieve";
         List<SpellChecker.SpellingError> errors = checker.check(text);
-        
+
         assertEquals(1, errors.size());
         List<String> suggestions = errors.get(0).getSuggestions();
         assertFalse(suggestions.isEmpty());
@@ -200,7 +200,7 @@ class SpellCheckerTest {
     void testSpellingErrorToString() {
         String text = "recieve";
         List<SpellChecker.SpellingError> errors = checker.check(text);
-        
+
         String errorString = errors.get(0).toString();
         assertTrue(errorString.contains("recieve"));
         assertTrue(errorString.contains("receive"));
@@ -215,4 +215,3 @@ class SpellCheckerTest {
         assertTrue(errors.get(0).getSuggestions().contains(correctWord));
     }
 }
-

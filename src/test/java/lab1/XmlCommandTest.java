@@ -38,11 +38,11 @@ class XmlCommandTest {
     void testAppendChildUndo() {
         AppendChildCommand cmd = new AppendChildCommand(editor, "book", "b1", "root", null);
         history.execute(cmd);
-        
+
         assertEquals(1, editor.getRoot().getChildren().size());
-        
+
         history.undo();
-        
+
         assertEquals(0, editor.getRoot().getChildren().size(), "撤销后应该没有子节点");
         assertNull(editor.findNodeById("b1"));
     }
@@ -53,7 +53,7 @@ class XmlCommandTest {
         history.execute(cmd);
         history.undo();
         history.redo();
-        
+
         assertEquals(1, editor.getRoot().getChildren().size(), "重做后应该恢复子节点");
         assertNotNull(editor.findNodeById("b1"));
     }
@@ -63,10 +63,10 @@ class XmlCommandTest {
     @Test
     void testInsertBeforeCommand() {
         editor.appendChild("item", "i1", "root", null);
-        
+
         InsertBeforeCommand cmd = new InsertBeforeCommand(editor, "item", "i0", "i1", "Before");
         history.execute(cmd);
-        
+
         XmlNode root = editor.getRoot();
         assertEquals(2, root.getChildren().size());
         assertEquals("i0", root.getChildren().get(0).getId());
@@ -75,11 +75,11 @@ class XmlCommandTest {
     @Test
     void testInsertBeforeUndo() {
         editor.appendChild("item", "i1", "root", null);
-        
+
         InsertBeforeCommand cmd = new InsertBeforeCommand(editor, "item", "i0", "i1", null);
         history.execute(cmd);
         history.undo();
-        
+
         assertEquals(1, editor.getRoot().getChildren().size());
         assertNull(editor.findNodeById("i0"));
     }
@@ -89,10 +89,10 @@ class XmlCommandTest {
     @Test
     void testEditIdCommand() {
         editor.appendChild("item", "oldId", "root", null);
-        
+
         EditIdCommand cmd = new EditIdCommand(editor, "oldId", "newId");
         history.execute(cmd);
-        
+
         assertNull(editor.findNodeById("oldId"));
         assertNotNull(editor.findNodeById("newId"));
     }
@@ -100,11 +100,11 @@ class XmlCommandTest {
     @Test
     void testEditIdUndo() {
         editor.appendChild("item", "oldId", "root", null);
-        
+
         EditIdCommand cmd = new EditIdCommand(editor, "oldId", "newId");
         history.execute(cmd);
         history.undo();
-        
+
         assertNotNull(editor.findNodeById("oldId"), "撤销后旧 ID 应该恢复");
         assertNull(editor.findNodeById("newId"));
     }
@@ -114,21 +114,21 @@ class XmlCommandTest {
     @Test
     void testEditTextCommand() {
         editor.appendChild("title", "t1", "root", "Old Text");
-        
+
         EditTextCommand cmd = new EditTextCommand(editor, "t1", "New Text");
         history.execute(cmd);
-        
+
         assertEquals("New Text", editor.findNodeById("t1").getTextContent());
     }
 
     @Test
     void testEditTextUndo() {
         editor.appendChild("title", "t1", "root", "Old Text");
-        
+
         EditTextCommand cmd = new EditTextCommand(editor, "t1", "New Text");
         history.execute(cmd);
         history.undo();
-        
+
         assertEquals("Old Text", editor.findNodeById("t1").getTextContent());
     }
 
@@ -138,10 +138,10 @@ class XmlCommandTest {
     void testDeleteElementCommand() {
         editor.appendChild("item", "i1", "root", null);
         editor.appendChild("child", "c1", "i1", null);
-        
+
         DeleteElementCommand cmd = new DeleteElementCommand(editor, "i1");
         history.execute(cmd);
-        
+
         assertEquals(0, editor.getRoot().getChildren().size());
         assertNull(editor.findNodeById("i1"));
         assertNull(editor.findNodeById("c1"), "子节点也应该被删除");
@@ -151,11 +151,11 @@ class XmlCommandTest {
     void testDeleteElementUndo() {
         editor.appendChild("item", "i1", "root", null);
         editor.appendChild("child", "c1", "i1", "text");
-        
+
         DeleteElementCommand cmd = new DeleteElementCommand(editor, "i1");
         history.execute(cmd);
         history.undo();
-        
+
         assertNotNull(editor.findNodeById("i1"), "撤销后节点应该恢复");
         assertNotNull(editor.findNodeById("c1"), "撤销后子节点也应该恢复");
         assertEquals("text", editor.findNodeById("c1").getTextContent());
@@ -169,14 +169,14 @@ class XmlCommandTest {
         history.execute(new AppendChildCommand(editor, "book", "b1", "root", null));
         history.execute(new AppendChildCommand(editor, "title", "t1", "b1", "Book 1"));
         history.execute(new AppendChildCommand(editor, "author", "a1", "b1", "Author 1"));
-        
+
         assertEquals(3, countAllNodes(editor.getRoot()) - 1); // -1 不算 root
-        
+
         // 撤销所有
         history.undo();
         history.undo();
         history.undo();
-        
+
         assertEquals(0, editor.getRoot().getChildren().size());
     }
 
@@ -184,13 +184,13 @@ class XmlCommandTest {
     void testUndoRedoChain() {
         history.execute(new AppendChildCommand(editor, "item", "i1", "root", null));
         history.execute(new AppendChildCommand(editor, "item", "i2", "root", null));
-        
+
         history.undo(); // 撤销 i2
         assertEquals(1, editor.getRoot().getChildren().size());
-        
+
         history.redo(); // 恢复 i2
         assertEquals(2, editor.getRoot().getChildren().size());
-        
+
         history.undo(); // 再次撤销 i2
         history.undo(); // 撤销 i1
         assertEquals(0, editor.getRoot().getChildren().size());
@@ -200,12 +200,12 @@ class XmlCommandTest {
     void testNewCommandClearsRedoStack() {
         history.execute(new AppendChildCommand(editor, "item", "i1", "root", null));
         history.execute(new AppendChildCommand(editor, "item", "i2", "root", null));
-        
+
         history.undo(); // 撤销 i2
-        
+
         // 执行新命令应该清空 redo 栈
         history.execute(new AppendChildCommand(editor, "item", "i3", "root", null));
-        
+
         // redo 应该无效（因为栈已清空）
         int beforeRedo = editor.getRoot().getChildren().size();
         history.redo();
@@ -222,4 +222,3 @@ class XmlCommandTest {
         return count;
     }
 }
-

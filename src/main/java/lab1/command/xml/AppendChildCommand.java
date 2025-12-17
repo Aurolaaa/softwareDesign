@@ -15,7 +15,7 @@ public class AppendChildCommand implements Command {
     private String parentId;
     private String text;
     private XmlNode backup;
-    
+
     public AppendChildCommand(XmlEditor editor, String tagName, String newId, String parentId, String text) {
         this.editor = editor;
         this.tagName = tagName;
@@ -23,14 +23,14 @@ public class AppendChildCommand implements Command {
         this.parentId = parentId;
         this.text = text;
     }
-    
+
     @Override
     public void execute() {
         backup = editor.getRoot().clone();
         editor.appendChild(tagName, newId, parentId, text);
         System.out.println("已向节点 " + parentId + " 追加子节点 " + newId);
     }
-    
+
     @Override
     public void undo() {
         if (backup != null) {

@@ -14,10 +14,10 @@ import java.util.regex.Pattern;
  * 这里使用硬编码的错误示例进行演示
  */
 public class MockSpellCheckerAdapter implements SpellChecker {
-    
+
     // 硬编码的常见拼写错误和建议
     private static final Map<String, List<String>> COMMON_ERRORS = new HashMap<>();
-    
+
     static {
         COMMON_ERRORS.put("teh", Arrays.asList("the"));
         COMMON_ERRORS.put("recieve", Arrays.asList("receive"));
@@ -35,37 +35,36 @@ public class MockSpellCheckerAdapter implements SpellChecker {
         COMMON_ERRORS.put("accomodate", Arrays.asList("accommodate"));
         COMMON_ERRORS.put("neccessary", Arrays.asList("necessary"));
     }
-    
+
     @Override
     public List<SpellingError> check(String text) {
         List<SpellingError> errors = new ArrayList<>();
-        
+
         if (text == null || text.trim().isEmpty()) {
             return errors;
         }
-        
+
         // 使用正则表达式提取单词
         Pattern wordPattern = Pattern.compile("\\b[a-zA-Z]+\\b");
         Matcher matcher = wordPattern.matcher(text);
-        
+
         while (matcher.find()) {
             String word = matcher.group();
             String lowerWord = word.toLowerCase();
-            
+
             // 检查是否是已知的拼写错误
             if (COMMON_ERRORS.containsKey(lowerWord)) {
                 SpellingError error = new SpellingError(
-                    word,
-                    COMMON_ERRORS.get(lowerWord),
-                    matcher.start()
-                );
+                        word,
+                        COMMON_ERRORS.get(lowerWord),
+                        matcher.start());
                 errors.add(error);
             }
         }
-        
+
         return errors;
     }
-    
+
     /**
      * 添加自定义错误（用于测试）
      */
@@ -73,5 +72,3 @@ public class MockSpellCheckerAdapter implements SpellChecker {
         COMMON_ERRORS.put(wrongWord.toLowerCase(), Arrays.asList(suggestions));
     }
 }
-
-
